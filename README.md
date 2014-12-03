@@ -18,3 +18,8 @@ Field      | Required | Description
 For each user a random password is generated using `SecureRandom.hex`. Users
 are able to set their own password after importing by using the password reset
 function in Discourse.
+
+## Running it
+Add this file to your `lib/tasks` and run do:
+
+    $ rake import_users[/path/to/users.csv]

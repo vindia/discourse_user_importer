@@ -2,6 +2,17 @@
 This script will create users for a Discourse installation given a CSV file with
 users.
 
+Some features include:
+
+* Password is automatically generated, but your users need to reset it
+* Imported users are automatically approved by the system user (`id: -1`)
+* Users can be automatically assigned to one or more predefined groups
+
+Caveats:
+
+* Error handling may be a little rough. Please check beforehand if all data in
+  your CSV-file is correct, e.g. that the groups you want to use already exist.
+
 ## Import file format
 
     email;name;username;title;groups
@@ -23,3 +34,10 @@ function in Discourse.
 Add this file to your `lib/tasks` and run do:
 
     $ rake import_users[/path/to/users.csv]
+
+## After running this script
+Since users are automatically approved, they can log in right away after running
+this script. Because the user's password is an automatically generated random
+string, a newly imported user can only log in by generating a new password
+through the password reset function in Discourse. They will then receive a link
+to set a new password in their email.

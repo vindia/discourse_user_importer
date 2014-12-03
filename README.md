@@ -7,7 +7,7 @@ users.
     email;name;username;title;groups
 
 Field      | Required | Description
------------------------------------
+-----------|----------|------------
 `email`    | **Yes**  | The email address of the user
 `name`     | **Yes**  | The user's full name
 `username` | No       | The user's user name. If none is supplied, this will be generated from the email address.

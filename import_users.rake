@@ -1,6 +1,6 @@
 require 'csv'
 
-namespace :user_importer
+namespace :user_importer do
   desc "Import users from a CSV file"
   task :import, [:csv_file] => [:environment] do |_, args|
     CSV.foreach(args[:csv_file], col_sep: ';', headers: true) do |new_user|

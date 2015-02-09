@@ -1,34 +1,65 @@
 require 'csv'
 
-desc "Import users from a CSV file"
-task :import_users, [:csv_file] => [:environment] do |_, args|
-  CSV.foreach(args[:csv_file], col_sep: ';', headers: true) do |user|
+namespace :user_importer
+  desc "Import users from a CSV file"
+  task :import, [:csv_file] => [:environment] do |_, args|
+    CSV.foreach(args[:csv_file], col_sep: ';', headers: true) do |new_user|
 
-    if User.where(email: user['email']).first
-      puts "User #{user['email']} already exists and is not imported."
-    else
-      u = User.new({
-        username: user['username'] || UserNameSuggester.suggest(user['email']),
-        email: user['email'],
-        password: SecureRandom.hex,
-        name: user['name'],
-        title: user['title'],
-        approved: true,
-        approved_by_id: -1
-      })
-      u.import_mode = true
-      u.groups = parse_user_groups user['groups']
-      u.save
+      user = User.where(email: new_user['email']).first
+      if user
+        new_groups = new_user_groups(new_user['groups']) - user.groups.map(&:name)
+        user.groups << new_groups
 
-      puts "Imported #{u.name} (#{u.email}) as #{u.username}"
+        puts "User #{new_user['email']} already exists and is not imported."
+        puts ">> was added to #{new_groups.join(',')}" if new_groups
+      else
+        u = User.new({
+          username: new_user['username'] || UserNameSuggester.suggest(new_user['email']),
+          email: new_user['email'],
+          password: SecureRandom.hex,
+          name: new_user['name'],
+          title: new_user['title'],
+          approved: true,
+          approved_by_id: -1
+        })
+        u.import_mode = true
+        u.groups = parse_user_groups new_user['groups']
+        u.save
+
+        puts "Imported #{u.name} (#{u.email}) as #{u.username} to #{u.groups.join(',')}"
+      end
+
     end
-
   end
+
+  desc "Check usernames of users to be imported"
+  task :check, [:csv_file] => [:environment] do |_, args|
+    CSV.foreach(args[:csv_file], col_sep: ';', headers: true) do |new_user|
+
+      if new_user['username']
+        user = User.where(username: new_user['username']).first
+
+        if user
+          puts "Username #{new_user['username']} (#{new_user['email']}) already exists for user: #{user.name} (#{user.email})"
+        else
+          puts "Username #{new_user['username']} is free to use!"
+        end
+
+      else
+        puts "No username supplied for #{new_user['email']}, ignoring..."
+      end
+
+    end
+  end
+end
+
+def new_user_groups(groups)
+  groups.split(',')
 end
 
 def parse_user_groups(groups)
   return [] if groups.blank?
-  groups.split(',').map do |group|
+  new_user_groups(groups).map do |group|
     Group.where(name: group).first
   end
 end

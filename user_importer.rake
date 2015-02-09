@@ -8,10 +8,10 @@ namespace :user_importer do
       user = User.where(email: new_user['email']).first
       if user
         new_groups = new_user_groups(new_user['groups']) - user.groups.map(&:name)
-        user.groups << new_groups
+        user.groups << parse_user_groups(new_groups)
 
         puts "User #{new_user['email']} already exists and is not imported."
-        puts ">> was added to #{new_groups.join(',')}" if new_groups
+        puts ">> #{new_user['email']} was added to #{new_groups.join(',')}" if new_groups
       else
         u = User.new({
           username: new_user['username'] || UserNameSuggester.suggest(new_user['email']),
@@ -26,7 +26,7 @@ namespace :user_importer do
         u.groups = parse_user_groups new_user['groups']
         u.save
 
-        puts "Imported #{u.name} (#{u.email}) as #{u.username} to #{u.groups.join(',')}"
+        puts "Imported #{u.name} (#{u.email}) as #{u.username} to #{u.groups.map(&:name).join(',')}"
       end
 
     end

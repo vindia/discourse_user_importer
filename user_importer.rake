@@ -11,7 +11,7 @@ namespace :user_importer do
         user.groups << parse_user_groups(new_groups)
 
         puts "User #{new_user['email']} already exists and is not imported."
-        puts ">> #{new_user['email']} was added to #{new_groups.join(',')}" if new_groups
+        puts ">> #{new_user['email']} was added to #{new_groups.join(',')}" unless new_groups.empty?
       else
         u = User.new({
           username: new_user['username'] || UserNameSuggester.suggest(new_user['email']),

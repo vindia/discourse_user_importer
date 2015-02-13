@@ -7,6 +7,8 @@ Some features include:
 * Password is automatically generated, but your users need to reset it
 * Imported users are automatically approved by the system user (`id: -1`)
 * Users can be automatically assigned to one or more predefined groups
+* If a user already exists, but has new groups in the CSV-file, these groups will be automatically added to the existing user
+* Special task to check if usernames already exist
 
 Caveats:
 
@@ -31,9 +33,15 @@ are able to set their own password after importing by using the password reset
 function in Discourse.
 
 ## Running it
-Add this file to your `lib/tasks` and run do:
+Add this file to your `lib/tasks` and run one of the following tasks:
 
-    $ rake import_users[/path/to/users.csv]
+To check if one or more usernames already exists, without importing:
+
+    $ rake user_importer:check[/path/to/users.csv]
+
+To import all the users in the file:
+
+    $ rake user_importer:import[/path/to/users.csv]
 
 ## After running this script
 Since users are automatically approved, they can log in right away after running

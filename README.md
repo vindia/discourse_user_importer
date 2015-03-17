@@ -6,6 +6,7 @@ Some features include:
 
 * Password is automatically generated, but your users need to reset it
 * Imported users are automatically approved by the system user (`id: -1`)
+* Imported users are automatically granted `trust_level: 1` permissions, just like invited users
 * Users can be automatically assigned to one or more predefined groups
 * If a user already exists, but has new groups in the CSV-file, these groups will be automatically added to the existing user
 * Special task to check if usernames already exist

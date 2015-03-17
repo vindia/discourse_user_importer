@@ -20,7 +20,8 @@ namespace :user_importer do
           name: new_user['name'],
           title: new_user['title'],
           approved: true,
-          approved_by_id: -1
+          approved_by_id: -1,
+          trust_level: 1
         })
         u.import_mode = true
         u.groups = parse_user_groups new_user['groups']

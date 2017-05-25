@@ -26,6 +26,7 @@ namespace :user_importer do
         })
         u.import_mode = true
         u.groups = parse_user_groups new_user['groups']
+        u.activate
 
         if u.save
           puts "Imported #{u.name} (#{u.email}) as #{u.username} to #{u.groups.map(&:name).join(',')}"

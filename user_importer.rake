@@ -25,9 +25,12 @@ namespace :user_importer do
         })
         u.import_mode = true
         u.groups = parse_user_groups new_user['groups']
-        u.save
 
-        puts "Imported #{u.name} (#{u.email}) as #{u.username} to #{u.groups.map(&:name).join(',')}"
+        if u.save
+          puts "Imported #{u.name} (#{u.email}) as #{u.username} to #{u.groups.map(&:name).join(',')}"
+        else
+          puts "Could not import #{u.name} (#{u.email}) due to #{u.errors.messages}"
+        end
       end
 
     end

@@ -3,8 +3,9 @@ require 'csv'
 namespace :user_importer do
   desc "Import users from a CSV file"
   task :import, [:csv_file] => [:environment] do |_, args|
-    CSV.foreach(args[:csv_file], col_sep: ';', headers: true) do |new_user|
+    abort "Please specify the CSV file to import" if args[:csv_file].blank?
 
+    CSV.foreach(args[:csv_file], col_sep: ';', headers: true) do |new_user|
       user = User.where(email: new_user['email']).first
       if user
         new_groups = new_user_groups(new_user['groups']) - user.groups.map(&:name)
@@ -26,9 +27,12 @@ namespace :user_importer do
         u.import_mode = true
         u.groups = parse_user_groups new_user['groups']
         u.activate
-        u.save
 
-        puts "Imported #{u.name} (#{u.email}) as #{u.username} to #{u.groups.map(&:name).join(',')}"
+        if u.save
+          puts "Imported #{u.name} (#{u.email}) as #{u.username} to #{u.groups.map(&:name).join(',')}"
+        else
+          puts "Could not import #{u.name} (#{u.email}) due to #{u.errors.messages}"
+        end
       end
 
     end
@@ -36,6 +40,8 @@ namespace :user_importer do
 
   desc "Check usernames of users to be imported"
   task :check, [:csv_file] => [:environment] do |_, args|
+    abort "Please specify the CSV file to import" if args[:csv_file].blank?
+
     CSV.foreach(args[:csv_file], col_sep: ';', headers: true) do |new_user|
 
       if new_user['username']
@@ -62,6 +68,6 @@ end
 def parse_user_groups(groups)
   return [] if groups.blank?
   new_user_groups(groups).map do |group|
-    Group.where(name: group).first
+    Group.where(name: group).first_or_create
   end
 end

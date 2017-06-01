@@ -64,6 +64,6 @@ end
 def parse_user_groups(groups)
   return [] if groups.blank?
   new_user_groups(groups).map do |group|
-    Group.where(name: group).first
+    Group.where(name: group).first_or_create
   end
 end

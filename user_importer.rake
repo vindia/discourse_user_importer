@@ -3,8 +3,9 @@ require 'csv'
 namespace :user_importer do
   desc "Import users from a CSV file"
   task :import, [:csv_file] => [:environment] do |_, args|
-    CSV.foreach(args[:csv_file], col_sep: ';', headers: true) do |new_user|
+    abort "Please specify the CSV file to import" if args[:csv_file].blank?
 
+    CSV.foreach(args[:csv_file], col_sep: ';', headers: true) do |new_user|
       user = User.where(email: new_user['email']).first
       if user
         new_groups = new_user_groups(new_user['groups']) - user.groups.map(&:name)
@@ -38,6 +39,8 @@ namespace :user_importer do
 
   desc "Check usernames of users to be imported"
   task :check, [:csv_file] => [:environment] do |_, args|
+    abort "Please specify the CSV file to import" if args[:csv_file].blank?
+
     CSV.foreach(args[:csv_file], col_sep: ';', headers: true) do |new_user|
 
       if new_user['username']

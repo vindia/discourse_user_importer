@@ -2,6 +2,23 @@
 This script will create users for a Discourse installation given a CSV file with
 users.
 
+
+
+> 🚨 **Deprecation Warning** 🚨
+>
+> Please be aware that this script is quite old and Discourse has evolved since then. If you want to add users to your Discourse installation automatically, please check out the following options:
+>
+> There are a few different programs that help automate the process using the API. For example:
+> * https://github.com/pfaffman/discourse-user-creator
+> * https://github.com/safisher/discourse_create_user
+>
+> As well as various helpful threads on the Discourse forum:
+> * https://meta.discourse.org/t/creating-user-via-api/36133
+> * https://meta.discourse.org/t/creating-active-users-via-the-api-gem/33133/36
+> * https://meta.discourse.org/t/creating-a-user-through-restful-users-api/9359
+>
+> Thanks to [@safisher](https://github.com/safisher) for these tips
+
 Some features include:
 
 * Password is automatically generated, but your users need to reset it
